@@ -1,0 +1,35 @@
+﻿LibraryManagement/                     ← Solution root
+│
+├── LibraryManagement.sln              ← Visual Studio solution file
+│
+├── LibraryManagement/                 ← Main WinForms project (.csproj)
+│   │
+│   ├── Program.cs                     ← Entry point (launches MainForm)
+│   │
+│   ├── Forms/                         ← All UI forms
+│   │   ├── MainForm.cs                ← Dashboard
+│   │   ├── BooksForm.cs               ← Manage books
+│   │   ├── MembersForm.cs             ← Manage members
+│   │   ├── TransactionsForm.cs        ← Borrow / Return
+│   │   └── LoansForm.cs               ← View loans & overdue
+│   │
+│   ├── Data/                          ← Database-related code
+│   │   ├── LibraryContext.cs          ← EF Core DbContext
+│   │   ├── Book.cs                    ← Book model
+│   │   ├── Member.cs                  ← Member model
+│   │   └── Loan.cs                    ← Loan model
+│   │
+│   ├── Services/                      ← Business logic (optional but recommended)
+│   │   ├── BookService.cs
+│   │   ├── MemberService.cs
+│   │   └── LoanService.cs
+│   │
+│   ├── Helpers/                       ← Utility classes (optional)
+│   │   └── MessageBoxHelper.cs
+│   │
+│   └── Properties/                    ← Auto-generated (app settings, resources)
+│       └── Resources.resx
+│
+└── docs/                              ← Documentation (optional)
+    ├── database_design.md
+    └── user_guide.md
