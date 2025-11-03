@@ -12,32 +12,29 @@ namespace LibraryManagement.Forms
             InitializeComponent();
             this.Text = "📚 Library Management System";
         }
-
-        //private void btnMembers_Click(object sender, EventArgs e)
-        //{
-        //    new MembersForm().ShowDialog();
-        //}
-
-        //private void btnTransactions_Click(object sender, EventArgs e)
-        //{
-        //    new TransactionsForm().ShowDialog();
-        //}
-
-        //private void btnLoans_Click(object sender, EventArgs e)
-        //{
-        //    new LoansForm().ShowDialog();
-        //}
-
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
         private void btnBooks_Click_1(object sender, EventArgs e)
         {
-            //new frmBooks().ShowDialog();
             frmBooks frm = new frmBooks();
-            frm.WindowState = FormWindowState.Maximized;
+            frm.WindowState = FormWindowState.Minimized;
+            frm.ShowDialog();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            frmMembers frm = new frmMembers();
+            frm.WindowState = FormWindowState.Minimized;
+            frm.ShowDialog();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            frmLoan frm = new frmLoan();
+            frm.WindowState = FormWindowState.Minimized;
             frm.ShowDialog();
         }
     }

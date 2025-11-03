@@ -46,6 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmLoanNew.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLoanNew.Designer.cs">
+      <DependentUpon>frmLoanNew.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmLoan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLoan.Designer.cs">
+      <DependentUpon>frmLoan.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmMemberDetails.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMemberDetails.Designer.cs">
+      <DependentUpon>frmMemberDetails.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmBookDetails.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,8 +101,20 @@
     <EmbeddedResource Include="frmBooks.resx">
       <DependentUpon>frmBooks.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmLoan.resx">
+      <DependentUpon>frmLoan.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmLoanNew.resx">
+      <DependentUpon>frmLoanNew.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMemberDetails.resx">
+      <DependentUpon>frmMemberDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMembers.resx">
+      <DependentUpon>frmMembers.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

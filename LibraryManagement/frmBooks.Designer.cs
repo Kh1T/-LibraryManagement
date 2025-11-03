@@ -118,7 +118,7 @@
             this.copiesTotalDataGridViewTextBoxColumn,
             this.copiesAvailableDataGridViewTextBoxColumn});
             this.dgvBooks.DataSource = this.booksBindingSource;
-            this.dgvBooks.Location = new System.Drawing.Point(54, 130);
+            this.dgvBooks.Location = new System.Drawing.Point(64, 131);
             this.dgvBooks.Name = "dgvBooks";
             this.dgvBooks.Size = new System.Drawing.Size(849, 238);
             this.dgvBooks.TabIndex = 6;
