@@ -56,7 +56,6 @@ namespace LibraryManagement.Forms
 
                     dgvBooks.DataSource = dataTable;
 
-                    // ✅ CRITICAL: Hide BookId column AFTER setting DataSource
                     if (dgvBooks.Columns.Contains("BookId"))
                     {
                         dgvBooks.Columns["BookId"].Visible = false;

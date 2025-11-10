@@ -10,7 +10,20 @@ namespace LibraryManagement.Forms
         public frmMain()
         {
             InitializeComponent();
+            if (!ShowLogin())
+            {
+                // If login failed, close application
+                this.Close();
+                return;
+            }
             this.Text = "📚 Library Management System";
+        }
+        private bool ShowLogin()
+        {
+            using (frmLogin loginForm = new frmLogin())
+            {
+                return loginForm.ShowDialog() == DialogResult.OK;
+            }
         }
         private void btnBooks_Click_1(object sender, EventArgs e)
         {
