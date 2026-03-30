@@ -13,8 +13,6 @@ namespace LibraryManagement
 {
     public partial class frmMembers : Form
     {
-        private const string ConnectionString = @"Server=localhost;Database=LibraryDB;Trusted_Connection=true;Connect Timeout=30;";
-
         public frmMembers()
         {
             InitializeComponent();
@@ -45,9 +43,9 @@ namespace LibraryManagement
 
             query += " ORDER BY JoinDate DESC";
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
+                // Note: DBConnection.GetConnection() already opens the connection
                 using (var command = new SqlCommand(query, connection))
                 {
                     if (!string.IsNullOrWhiteSpace(searchKeyword))
@@ -167,10 +165,9 @@ namespace LibraryManagement
 
         private void DeleteMember(int memberId)
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
-
+                // Note: DBConnection.GetConnection() already opens the connection
                 // Check if member has active loans
                 using (var checkCmd = new SqlCommand(
                     "SELECT COUNT(*) FROM Loans WHERE MemberId = @MemberId AND ReturnDate IS NULL",

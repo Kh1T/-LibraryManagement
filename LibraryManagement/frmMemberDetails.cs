@@ -6,7 +6,6 @@ namespace LibraryManagement
 {
     public partial class frmMemberDetails : Form
     {
-        private const string ConnectionString = @"Server=localhost;Database=LibraryDB;Trusted_Connection=true;Connect Timeout=30;";
         private int _memberId = -1;
         public frmMemberDetails()
         {
@@ -34,9 +33,9 @@ namespace LibraryManagement
 
             string query = "SELECT FirstName, LastName, Email, Phone, JoinDate, IsActive FROM Members WHERE MemberId = @MemberId";
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
+                // Note: DBConnection.GetConnection() already opens the connection
                 using (var command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@MemberId", _memberId);
@@ -90,9 +89,9 @@ namespace LibraryManagement
                 INSERT INTO Members (FirstName, LastName, Email, Phone, JoinDate, IsActive)
                 VALUES (@FirstName, @LastName, @Email, @Phone, @JoinDate, @IsActive)";
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
+                // Note: DBConnection.GetConnection() already opens the connection
                 using (var command = new SqlCommand(query, connection))
                 {
                     SetParameters(command);
@@ -112,9 +111,9 @@ namespace LibraryManagement
                     IsActive = @IsActive
                 WHERE MemberId = @MemberId";
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
+                // Note: DBConnection.GetConnection() already opens the connection
                 using (var command = new SqlCommand(query, connection))
                 {
                     SetParameters(command);

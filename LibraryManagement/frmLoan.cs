@@ -13,7 +13,6 @@ namespace LibraryManagement
 {
     public partial class frmLoan : Form
     {
-        private const string ConnectionString = @"Server=localhost;Database=LibraryDB;Trusted_Connection=true;Connect Timeout=30;";
         public frmLoan()
         {
             InitializeComponent();
@@ -26,9 +25,9 @@ namespace LibraryManagement
         // Load all loans into DataGridView using stored procedure
         private void LoadLoans(string filter = "All")
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
+                // Note: DBConnection.GetConnection() already opens the connection
                 using (var command = new SqlCommand("sp_GetLoans", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
@@ -188,10 +187,8 @@ namespace LibraryManagement
         {
             try
             {
-                using (var connection = new SqlConnection(ConnectionString))
+                using (var connection = DBConnection.GetConnection())
                 {
-                    connection.Open();
-                    
                     using (var command = new SqlCommand("sp_ReturnBook", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
@@ -204,18 +201,14 @@ namespace LibraryManagement
                         };
                         command.Parameters.Add(resultParam);
 
-                        int returnValue = (int)command.ExecuteScalar();
+                        // Use ExecuteNonQuery for stored procedures with OUTPUT parameters
+                        command.ExecuteNonQuery();
 
-                        if (returnValue == 0)
-                        {
-                            MessageBox.Show("Book returned successfully.", "Success",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show(resultParam.Value.ToString(), "Error",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
+                        // Read the OUTPUT parameter after execution
+                        string resultMessage = resultParam.Value?.ToString() ?? "Unknown error";
+
+                        MessageBox.Show(resultMessage, "Result",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
@@ -230,10 +223,8 @@ namespace LibraryManagement
         {
             try
             {
-                using (var connection = new SqlConnection(ConnectionString))
+                using (var connection = DBConnection.GetConnection())
                 {
-                    connection.Open();
-                    
                     using (var command = new SqlCommand("sp_ExtendDueDate", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
@@ -246,18 +237,14 @@ namespace LibraryManagement
                         };
                         command.Parameters.Add(resultParam);
 
-                        int returnValue = (int)command.ExecuteScalar();
+                        // Use ExecuteNonQuery for stored procedures with OUTPUT parameters
+                        command.ExecuteNonQuery();
 
-                        if (returnValue == 0)
-                        {
-                            MessageBox.Show("Due date extended by 14 days.", "Success",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            MessageBox.Show(resultParam.Value.ToString(), "Error",
-                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        }
+                        // Read the OUTPUT parameter after execution
+                        string resultMessage = resultParam.Value?.ToString() ?? "Unknown error";
+
+                        MessageBox.Show(resultMessage, "Result",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }

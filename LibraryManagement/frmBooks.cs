@@ -8,7 +8,6 @@ namespace LibraryManagement.Forms
 {
     public partial class frmBooks : Form
     {
-        private const string ConnectionString = @"Server=localhost;Database=LibraryDB;Trusted_Connection=true;Connect Timeout=30;";
         public frmBooks()
         {
             InitializeComponent();
@@ -41,9 +40,9 @@ namespace LibraryManagement.Forms
                 query += " WHERE Title LIKE @Search OR Author LIKE @Search";
             }
 
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
+                // Note: DBConnection.GetConnection() already opens the connection
                 using (var command = new SqlCommand(query, connection))
                 {
                     if (!string.IsNullOrWhiteSpace(searchKeyword))
@@ -152,10 +151,9 @@ namespace LibraryManagement.Forms
 
         private void DeleteBook(int bookId)
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
-                connection.Open();
-
+                // Note: DBConnection.GetConnection() already opens the connection
                 // Check if book is on loan
                 using (var checkCmd = new SqlCommand(
                     "SELECT COUNT(*) FROM Loans WHERE BookId = @BookId AND ReturnDate IS NULL",

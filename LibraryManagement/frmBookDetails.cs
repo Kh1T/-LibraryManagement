@@ -13,8 +13,6 @@ namespace LibraryManagement
 {
     public partial class frmBookDetails : Form
     {
-        private const string ConnectionString = @"Server=localhost;Database=LibraryDB;Trusted_Connection=true;Connect Timeout=30;";
-
         private int? _bookId = null;
 
         // Constructor for ADD mode
@@ -27,9 +25,9 @@ namespace LibraryManagement
 
         private void LoadBook(int bookId)
         {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlConnection connection = DBConnection.GetConnection())
             {
-                connection.Open();
+                // Note: DBConnection.GetConnection() already opens the connection
                 using (SqlCommand command = new SqlCommand(@"
                     SELECT ISBN, Title, Author, Genre, PublicationYear, CopiesTotal
                     FROM Books 
@@ -126,10 +124,9 @@ namespace LibraryManagement
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlConnection connection = DBConnection.GetConnection())
                 {
-                    connection.Open();
-
+                    // Note: DBConnection.GetConnection() already opens the connection
                     if (_bookId.HasValue)
                     {
                         // UPDATE existing book

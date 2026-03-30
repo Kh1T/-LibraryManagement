@@ -13,8 +13,6 @@ namespace LibraryManagement
 {
     public partial class frmLoanNew : Form
     {
-        private const string ConnectionString = @"Server=localhost;Database=LibraryDB;Trusted_Connection=true;Connect Timeout=30;";
-
         public frmLoanNew()
         {
             InitializeComponent();
@@ -25,7 +23,7 @@ namespace LibraryManagement
         }
         private void LoadBooks()
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
                 using (var command = new SqlCommand("sp_GetAvailableBooks", connection))
                 {
@@ -42,7 +40,7 @@ namespace LibraryManagement
         }
         private void LoadMembers()
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            using (var connection = DBConnection.GetConnection())
             {
                 using (var command = new SqlCommand("sp_GetActiveMembers", connection))
                 {
@@ -84,10 +82,9 @@ namespace LibraryManagement
         {
             try
             {
-                using (var connection = new SqlConnection(ConnectionString))
+                using (var connection = DBConnection.GetConnection())
                 {
-                    connection.Open();
-
+                    // Note: DBConnection.GetConnection() already opens the connection
                     using (var command = new SqlCommand("sp_CreateLoan", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
