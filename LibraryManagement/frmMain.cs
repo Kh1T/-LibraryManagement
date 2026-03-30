@@ -27,16 +27,22 @@ namespace LibraryManagement.Forms
         }
         private void btnBooks_Click_1(object sender, EventArgs e)
         {
-            frmBooks frm = new frmBooks();
-            frm.WindowState = FormWindowState.Minimized;
-            frm.ShowDialog();
+            this.Hide();
+            using (frmBooks frm = new frmBooks())
+            {
+                frm.ShowDialog();
+            }
+            this.Show();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            frmMembers frm = new frmMembers();
-            frm.WindowState = FormWindowState.Minimized;
-            frm.ShowDialog();
+            this.Hide();
+            using (frmMembers frm = new frmMembers())
+            {
+                frm.ShowDialog();
+            }
+            this.Show();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -46,9 +52,12 @@ namespace LibraryManagement.Forms
 
         private void button4_Click(object sender, EventArgs e)
         {
-            frmLoan frm = new frmLoan();
-            frm.WindowState = FormWindowState.Minimized;
-            frm.ShowDialog();
+            this.Hide();
+            using (frmLoan frm = new frmLoan())
+            {
+                frm.ShowDialog();
+            }
+            this.Show();
         }
     }
 }

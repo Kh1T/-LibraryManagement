@@ -25,40 +25,36 @@ namespace LibraryManagement
         }
         private void LoadBooks()
         {
-            string query = @"
-                SELECT BookId, Title, Author, CopiesAvailable 
-                FROM Books 
-                WHERE CopiesAvailable > 0
-                ORDER BY Title";
-
             using (var connection = new SqlConnection(ConnectionString))
             {
-                var adapter = new SqlDataAdapter(query, connection);
-                var dataTable = new DataTable();
-                adapter.Fill(dataTable);
+                using (var command = new SqlCommand("sp_GetAvailableBooks", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    var adapter = new SqlDataAdapter(command);
+                    var dataTable = new DataTable();
+                    adapter.Fill(dataTable);
 
-                cmbBook.DisplayMember = "Title";
-                cmbBook.ValueMember = "BookId";
-                cmbBook.DataSource = dataTable;
+                    cmbBook.DisplayMember = "Title";
+                    cmbBook.ValueMember = "BookId";
+                    cmbBook.DataSource = dataTable;
+                }
             }
         }
         private void LoadMembers()
         {
-            string query = @"
-                SELECT MemberId, FirstName + ' ' + LastName AS FullName 
-                FROM Members 
-                WHERE IsActive = 1
-                ORDER BY LastName, FirstName";
-
             using (var connection = new SqlConnection(ConnectionString))
             {
-                var adapter = new SqlDataAdapter(query, connection);
-                var dataTable = new DataTable();
-                adapter.Fill(dataTable);
+                using (var command = new SqlCommand("sp_GetActiveMembers", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    var adapter = new SqlDataAdapter(command);
+                    var dataTable = new DataTable();
+                    adapter.Fill(dataTable);
 
-                cmbMember.DisplayMember = "FullName";
-                cmbMember.ValueMember = "MemberId";
-                cmbMember.DataSource = dataTable;
+                    cmbMember.DisplayMember = "FullName";
+                    cmbMember.ValueMember = "MemberId";
+                    cmbMember.DataSource = dataTable;
+                }
             }
         }
 
@@ -86,45 +82,48 @@ namespace LibraryManagement
 
         private void CreateLoan()
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                using (var transaction = connection.BeginTransaction())
+                using (var connection = new SqlConnection(ConnectionString))
                 {
-                    try
-                    {
-                        // Create loan record
-                        using (var loanCmd = new SqlCommand(
-                            "INSERT INTO Loans (BookId, MemberId, BorrowDate, DueDate) VALUES (@BookId, @MemberId, @BorrowDate, @DueDate)",
-                            connection, transaction))
-                        {
-                            loanCmd.Parameters.AddWithValue("@BookId", cmbBook.SelectedValue);
-                            loanCmd.Parameters.AddWithValue("@MemberId", cmbMember.SelectedValue);
-                            loanCmd.Parameters.AddWithValue("@BorrowDate", dtpBorrowDate.Value);
-                            loanCmd.Parameters.AddWithValue("@DueDate", dtpDueDate.Value);
-                            loanCmd.ExecuteNonQuery();
-                        }
+                    connection.Open();
 
-                        // Decrease available copies
-                        using (var updateCmd = new SqlCommand(
-                            "UPDATE Books SET CopiesAvailable = CopiesAvailable - 1 WHERE BookId = @BookId",
-                            connection, transaction))
-                        {
-                            updateCmd.Parameters.AddWithValue("@BookId", cmbBook.SelectedValue);
-                            updateCmd.ExecuteNonQuery();
-                        }
-
-                        transaction.Commit();
-                        MessageBox.Show("Book loan created successfully.", "Success",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    catch (Exception ex)
+                    using (var command = new SqlCommand("sp_CreateLoan", connection))
                     {
-                        transaction.Rollback();
-                        throw new Exception($"Failed to create loan: {ex.Message}");
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@BookId", cmbBook.SelectedValue);
+                        command.Parameters.AddWithValue("@MemberId", cmbMember.SelectedValue);
+                        command.Parameters.AddWithValue("@BorrowDate", dtpBorrowDate.Value);
+                        command.Parameters.AddWithValue("@DueDate", dtpDueDate.Value);
+
+                        var newLoanIdParam = new SqlParameter("@NewLoanId", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        var resultMessageParam = new SqlParameter("@ResultMessage", SqlDbType.NVarChar, 255)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        command.Parameters.Add(newLoanIdParam);
+                        command.Parameters.Add(resultMessageParam);
+
+                        int returnValue = (int)command.ExecuteScalar();
+
+                        if (returnValue == 0)
+                        {
+                            MessageBox.Show(resultMessageParam.Value.ToString(), "Success",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            throw new Exception(resultMessageParam.Value.ToString());
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to create loan: {ex.Message}");
             }
         }
 

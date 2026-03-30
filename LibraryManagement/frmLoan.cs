@@ -22,59 +22,17 @@ namespace LibraryManagement
             SetupFilterComboBox();
         }
 
-        // Load all loans into DataGridView
+        // Load all loans into DataGridView using stored procedure
         private void LoadLoans(string filter = "All")
         {
-            string query = @"
-                SELECT 
-                    l.LoanId,
-                    l.BookId,
-                    b.Title AS BookTitle,
-                    l.MemberId,
-                    m.FirstName + ' ' + m.LastName AS MemberName,
-                    l.BorrowDate,
-                    l.DueDate,
-                    l.ReturnDate,
-                    CASE 
-                        WHEN l.ReturnDate IS NOT NULL THEN 'Returned'
-                        WHEN GETDATE() > l.DueDate THEN 'Overdue'
-                        ELSE 'On Loan'
-                    END AS Status
-                FROM Loans l
-                INNER JOIN Books b ON l.BookId = b.BookId
-                INNER JOIN Members m ON l.MemberId = m.MemberId
-                WHERE 1=1";
-
-            // Apply filters
-            switch (filter)
-            {
-                case "Active":
-                    query += " AND l.ReturnDate IS NULL";
-                    break;
-                case "Overdue":
-                    query += " AND l.ReturnDate IS NULL AND GETDATE() > l.DueDate";
-                    break;
-                case "Returned":
-                    query += " AND l.ReturnDate IS NOT NULL";
-                    break;
-            }
-
-            if (!string.IsNullOrWhiteSpace(txtSearch.Text))
-            {
-                query += " AND (b.Title LIKE @Search OR m.FirstName LIKE @Search OR m.LastName LIKE @Search)";
-            }
-
-            query += " ORDER BY l.BorrowDate DESC";
-
             using (var connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
-                using (var command = new SqlCommand(query, connection))
+                using (var command = new SqlCommand("sp_GetLoans", connection))
                 {
-                    if (!string.IsNullOrWhiteSpace(txtSearch.Text))
-                    {
-                        command.Parameters.AddWithValue("@Search", $"%{txtSearch.Text}%");
-                    }
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Filter", filter);
+                    command.Parameters.AddWithValue("@Search", string.IsNullOrWhiteSpace(txtSearch.Text) ? (object)DBNull.Value : txtSearch.Text);
 
                     var adapter = new SqlDataAdapter(command);
                     var dataTable = new DataTable();
@@ -235,73 +193,85 @@ namespace LibraryManagement
 
         private void ReturnBook(int loanId)
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                using (var transaction = connection.BeginTransaction())
+                using (var connection = new SqlConnection(ConnectionString))
                 {
-                    try
+                    connection.Open();
+                    
+                    using (var command = new SqlCommand("sp_ReturnBook", connection))
                     {
-                        // Update ReturnDate
-                        using (var returnCmd = new SqlCommand(
-                            "UPDATE Loans SET ReturnDate = @ReturnDate WHERE LoanId = @LoanId",
-                            connection, transaction))
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@LoanId", loanId);
+                        command.Parameters.AddWithValue("@ReturnDate", DateTime.Today);
+                        
+                        var resultParam = new SqlParameter("@ResultMessage", SqlDbType.NVarChar, 255)
                         {
-                            returnCmd.Parameters.AddWithValue("@ReturnDate", DateTime.Today);
-                            returnCmd.Parameters.AddWithValue("@LoanId", loanId);
-                            returnCmd.ExecuteNonQuery();
-                        }
+                            Direction = ParameterDirection.Output
+                        };
+                        command.Parameters.Add(resultParam);
 
-                        // Increase available copies
-                        using (var updateCmd = new SqlCommand(
-                            @"UPDATE Books 
-                              SET CopiesAvailable = CopiesAvailable + 1 
-                              WHERE BookId = (SELECT BookId FROM Loans WHERE LoanId = @LoanId)",
-                            connection, transaction))
+                        int returnValue = (int)command.ExecuteScalar();
+
+                        if (returnValue == 0)
                         {
-                            updateCmd.Parameters.AddWithValue("@LoanId", loanId);
-                            updateCmd.ExecuteNonQuery();
+                            MessageBox.Show("Book returned successfully.", "Success",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
-
-                        transaction.Commit();
-                        MessageBox.Show("Book returned successfully.", "Success",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        MessageBox.Show($"Error returning book: {ex.Message}", "Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        else
+                        {
+                            MessageBox.Show(resultParam.Value.ToString(), "Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error returning book: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void ExtendDueDate(int loanId)
         {
-            using (var connection = new SqlConnection(ConnectionString))
+            try
             {
-                connection.Open();
-
-                using (var cmd = new SqlCommand(
-                    "UPDATE Loans SET DueDate = DATEADD(day, 14, DueDate) WHERE LoanId = @LoanId",
-                    connection))
+                using (var connection = new SqlConnection(ConnectionString))
                 {
-                    cmd.Parameters.AddWithValue("@LoanId", loanId);
-                    int rowsAffected = cmd.ExecuteNonQuery();
+                    connection.Open();
+                    
+                    using (var command = new SqlCommand("sp_ExtendDueDate", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("@LoanId", loanId);
+                        command.Parameters.AddWithValue("@ExtensionDays", 14);
+                        
+                        var resultParam = new SqlParameter("@ResultMessage", SqlDbType.NVarChar, 255)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        command.Parameters.Add(resultParam);
 
-                    if (rowsAffected > 0)
-                    {
-                        MessageBox.Show("Due date extended by 14 days.", "Success",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Failed to extend due date.", "Error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        int returnValue = (int)command.ExecuteScalar();
+
+                        if (returnValue == 0)
+                        {
+                            MessageBox.Show("Due date extended by 14 days.", "Success",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show(resultParam.Value.ToString(), "Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error extending due date: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
