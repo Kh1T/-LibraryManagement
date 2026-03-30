@@ -12,6 +12,7 @@ namespace LibraryManagement.Forms
         public frmBooks()
         {
             InitializeComponent();
+            this.Text = "📚 Book Management";
             dgvBooks.AutoGenerateColumns = true;
             LoadBooks();
         }

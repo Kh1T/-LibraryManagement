@@ -107,16 +107,21 @@ namespace LibraryManagement
                         command.Parameters.Add(newLoanIdParam);
                         command.Parameters.Add(resultMessageParam);
 
-                        int returnValue = (int)command.ExecuteScalar();
+                        // Use ExecuteNonQuery for stored procedures with OUTPUT parameters
+                        command.ExecuteNonQuery();
 
-                        if (returnValue == 0)
+                        // Read the OUTPUT parameters after execution
+                        int newLoanId = newLoanIdParam.Value != DBNull.Value ? Convert.ToInt32(newLoanIdParam.Value) : 0;
+                        string resultMessage = resultMessageParam.Value?.ToString() ?? "Unknown error";
+
+                        if (newLoanId > 0)
                         {
-                            MessageBox.Show(resultMessageParam.Value.ToString(), "Success",
+                            MessageBox.Show($"Loan created successfully! Loan ID: {newLoanId}", "Success",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
                         {
-                            throw new Exception(resultMessageParam.Value.ToString());
+                            throw new Exception(resultMessage);
                         }
                     }
                 }

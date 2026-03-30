@@ -18,6 +18,7 @@ namespace LibraryManagement
         public frmMembers()
         {
             InitializeComponent();
+            this.Text = "📚 Member Management";
             dgvMembers.AutoGenerateColumns = true;
             LoadMembers();
         }

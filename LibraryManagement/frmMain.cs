@@ -28,9 +28,9 @@ namespace LibraryManagement.Forms
         private void btnBooks_Click_1(object sender, EventArgs e)
         {
             this.Hide();
-            using (frmBooks frm = new frmBooks())
+            using (frmBooks booksForm = new frmBooks())
             {
-                frm.ShowDialog();
+                booksForm.ShowDialog();
             }
             this.Show();
         }
@@ -38,9 +38,9 @@ namespace LibraryManagement.Forms
         private void button2_Click(object sender, EventArgs e)
         {
             this.Hide();
-            using (frmMembers frm = new frmMembers())
+            using (frmMembers membersForm = new frmMembers())
             {
-                frm.ShowDialog();
+                membersForm.ShowDialog();
             }
             this.Show();
         }
@@ -53,9 +53,9 @@ namespace LibraryManagement.Forms
         private void button4_Click(object sender, EventArgs e)
         {
             this.Hide();
-            using (frmLoan frm = new frmLoan())
+            using (frmLoan loanForm = new frmLoan())
             {
-                frm.ShowDialog();
+                loanForm.ShowDialog();
             }
             this.Show();
         }

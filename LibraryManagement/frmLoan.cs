@@ -17,6 +17,7 @@ namespace LibraryManagement
         public frmLoan()
         {
             InitializeComponent();
+            this.Text = "📚 Loan Management";
             dgvLoans.AutoGenerateColumns = true;
             LoadLoans();
             SetupFilterComboBox();
@@ -80,15 +81,6 @@ namespace LibraryManagement
             cmbFilter.SelectedIndex = 0;
         }
 
-        private void frmLoan_Load(object sender, EventArgs e)
-        {
-            // TODO: This line of code loads data into the 'libraryDBDataSet.Loans' table. You can move, or remove it, as needed.
-            this.loansTableAdapter.Fill(this.libraryDBDataSet.Loans);
-
-        }
-
-        
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -114,6 +106,7 @@ namespace LibraryManagement
             }
         }
 
+     
         private void btnReturn_Click(object sender, EventArgs e)
         {
             if (dgvLoans.SelectedRows.Count == 0)
