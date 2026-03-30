@@ -79,7 +79,7 @@ namespace LibraryManagement
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving member: {ex.Message}", "Error",
+                MessageBox.Show("Error saving member: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

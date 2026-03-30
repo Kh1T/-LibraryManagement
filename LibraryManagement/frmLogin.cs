@@ -12,6 +12,8 @@ namespace LibraryManagement
 {
     public partial class frmLogin : Form
     {
+        private bool isLoggedIn = false;
+
         public frmLogin()
         {
             InitializeComponent();
@@ -19,14 +21,19 @@ namespace LibraryManagement
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            // Prevent double click
+            if (isLoggedIn) return;
+            isLoggedIn = true;
+
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
 
             // Check credentials
             if (username == "admin" && password == "admin")
             {
+                // Setting DialogResult automatically closes the form (when shown with ShowDialog)
+                // DO NOT call Close() - it causes issues!
                 this.DialogResult = DialogResult.OK;
-                this.Close();
             }
             else
             {
@@ -34,6 +41,7 @@ namespace LibraryManagement
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtPassword.Clear();
                 txtUsername.Focus();
+                isLoggedIn = false;
             }
         }
 
@@ -44,8 +52,23 @@ namespace LibraryManagement
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            // Setting DialogResult automatically closes the form
             this.DialogResult = DialogResult.Cancel;
-            this.Close();
+        }
+
+        private void lblAppName_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panelSidebar_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void panelLoginCard_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

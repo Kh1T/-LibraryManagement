@@ -17,7 +17,25 @@ namespace LibraryManagement
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+
+            // Create and show login form
+            frmLogin loginForm = new frmLogin();
+            loginForm.ShowDialog();
+
+            // Check if login was successful
+            // Note: Form is ALREADY closed when ShowDialog() returns
+            // DO NOT call Close() again - it will cause issues!
+            bool loginSuccess = (loginForm.DialogResult == DialogResult.OK);
+            loginForm.Dispose();
+
+            if (loginSuccess)
+            {
+                // Open main form in maximized state
+                frmMain mainForm = new frmMain();
+                mainForm.WindowState = FormWindowState.Maximized;
+                Application.Run(mainForm);
+            }
+            // If login failed or cancelled, application exits
         }
     }
 }

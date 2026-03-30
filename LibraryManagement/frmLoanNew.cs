@@ -73,7 +73,7 @@ namespace LibraryManagement
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error creating loan: {ex.Message}", "Error",
+                MessageBox.Show("Error creating loan: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -113,7 +113,7 @@ namespace LibraryManagement
 
                         if (newLoanId > 0)
                         {
-                            MessageBox.Show($"Loan created successfully! Loan ID: {newLoanId}", "Success",
+                            MessageBox.Show("Loan created successfully! Loan ID: " + newLoanId, "Success",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
@@ -125,7 +125,7 @@ namespace LibraryManagement
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to create loan: {ex.Message}");
+                throw new Exception("Failed to create loan: " + ex.Message);
             }
         }
 

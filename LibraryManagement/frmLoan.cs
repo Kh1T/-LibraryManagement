@@ -214,7 +214,7 @@ namespace LibraryManagement
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error returning book: {ex.Message}", "Error",
+                MessageBox.Show("Error returning book: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -250,7 +250,7 @@ namespace LibraryManagement
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error extending due date: {ex.Message}", "Error",
+                MessageBox.Show("Error extending due date: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

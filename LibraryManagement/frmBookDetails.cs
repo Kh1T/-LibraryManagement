@@ -177,7 +177,7 @@ namespace LibraryManagement
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while saving:\n{ex.Message}",
+                MessageBox.Show("An error occurred while saving:\n" + ex.Message,
                     "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }

@@ -47,7 +47,7 @@ namespace LibraryManagement.Forms
                 {
                     if (!string.IsNullOrWhiteSpace(searchKeyword))
                     {
-                        command.Parameters.AddWithValue("@Search", $"%{searchKeyword}%");
+                        command.Parameters.AddWithValue("@Search", "%" + searchKeyword + "%");
                     }
 
                     var adapter = new SqlDataAdapter(command);

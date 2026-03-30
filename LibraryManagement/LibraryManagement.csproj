@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -156,9 +158,29 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="DBConnection.cs" />
+    <Compile Include="ucBooks.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucMembers.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucLoans.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ucBooks.resx">
+      <DependentUpon>ucBooks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucMembers.resx">
+      <DependentUpon>ucMembers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucLoans.resx">
+      <DependentUpon>ucLoans.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
